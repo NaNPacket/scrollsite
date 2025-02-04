@@ -3,80 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>React Scroll Sayfası</title>
+    <title>Doğal Butik CoffeeShop</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .section {
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            position: relative;
-        }
-
-        .nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-
-        .nav-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .content {
-            text-align: center;
-            max-width: 800px;
-            padding: 2rem;
-        }
-
-        .scroll-indicator {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ccc;
-            cursor: pointer;
-        }
-
-        .dot.active {
-            background: #333;
-        }
-
-        #home { background: #f8d7da; }
-        #about { background: #d4edda; }
-        #services { background: #cce5ff; }
-        #contact { background: #fff3cd; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f4efe6; color: #5a3e2b; }
+        .section { height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center; padding: 2rem; }
+        .nav { position: fixed; top: 0; width: 100%; background: rgba(90, 62, 43, 0.9); padding: 1rem; color: white; }
+        .nav-links { display: flex; justify-content: center; gap: 2rem; list-style: none; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; }
+        .scroll-indicator { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: #c4a484; margin: 5px; cursor: pointer; }
+        .dot.active { background: #5a3e2b; }
+        #home { background: #f4efe6; }
+        #products { background: #d6c4a8; }
+        #about { background: #b59d7c; }
+        #contact { background: #8c7254; }
     </style>
 </head>
 <body>
@@ -84,113 +27,83 @@
     <script>
         const App = () => {
             const [activeSection, setActiveSection] = React.useState('home');
-
             React.useEffect(() => {
                 const handleScroll = () => {
                     const sections = document.querySelectorAll('.section');
                     let current = '';
-
                     sections.forEach(section => {
                         const sectionTop = section.offsetTop;
-                        const sectionHeight = section.clientHeight;
-                        if (window.scrollY >= sectionTop - sectionHeight / 3) {
+                        if (window.scrollY >= sectionTop - 100) {
                             current = section.getAttribute('id');
                         }
                     });
-
                     setActiveSection(current);
                 };
-
                 window.addEventListener('scroll', handleScroll);
                 return () => window.removeEventListener('scroll', handleScroll);
             }, []);
-
             const scrollToSection = (id) => {
                 document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
             };
-
             return React.createElement('div', null, [
                 React.createElement('nav', { className: 'nav', key: 'nav' },
                     React.createElement('ul', { className: 'nav-links' }, [
-                        React.createElement('li', { key: 'home' },
-                            React.createElement('a', { href: '#home', onClick: (e) => {
+                        'home', 'products', 'about', 'contact'
+                    ].map(section =>
+                        React.createElement('li', { key: section },
+                            React.createElement('a', { href: `#${section}`, onClick: (e) => {
                                 e.preventDefault();
-                                scrollToSection('home');
-                            }}, 'Ana Sayfa')
-                        ),
-                        React.createElement('li', { key: 'about' },
-                            React.createElement('a', { href: '#about', onClick: (e) => {
-                                e.preventDefault();
-                                scrollToSection('about');
-                            }}, 'Hakkımızda')
-                        ),
-                        React.createElement('li', { key: 'services' },
-                            React.createElement('a', { href: '#services', onClick: (e) => {
-                                e.preventDefault();
-                                scrollToSection('services');
-                            }}, 'Hizmetler')
-                        ),
-                        React.createElement('li', { key: 'contact' },
-                            React.createElement('a', { href: '#contact', onClick: (e) => {
-                                e.preventDefault();
-                                scrollToSection('contact');
-                            }}, 'İletişim')
+                                scrollToSection(section);
+                            }}, section.charAt(0).toUpperCase() + section.slice(1))
                         )
-                    ])
+                    ))
                 ),
-                React.createElement('div', { className: 'scroll-indicator', key: 'indicator' }, [
-                    React.createElement('div', {
-                        key: 'home-dot',
-                        className: `dot ${activeSection === 'home' ? 'active' : ''}`,
-                        onClick: () => scrollToSection('home')
-                    }),
-                    React.createElement('div', {
-                        key: 'about-dot',
-                        className: `dot ${activeSection === 'about' ? 'active' : ''}`,
-                        onClick: () => scrollToSection('about')
-                    }),
-                    React.createElement('div', {
-                        key: 'services-dot',
-                        className: `dot ${activeSection === 'services' ? 'active' : ''}`,
-                        onClick: () => scrollToSection('services')
-                    }),
-                    React.createElement('div', {
-                        key: 'contact-dot',
-                        className: `dot ${activeSection === 'contact' ? 'active' : ''}`,
-                        onClick: () => scrollToSection('contact')
-                    })
-                ]),
+                React.createElement('div', { className: 'scroll-indicator', key: 'indicator' },
+                    ['home', 'products', 'about', 'contact'].map(section =>
+                        React.createElement('div', {
+                            key: section,
+                            className: `dot ${activeSection === section ? 'active' : ''}`,
+                            onClick: () => scrollToSection(section)
+                        })
+                    )
+                ),
                 React.createElement('section', { id: 'home', className: 'section', key: 'home' },
                     React.createElement('div', { className: 'content' }, [
-                        React.createElement('h1', { key: 'title' }, 'Hoş Geldiniz'),
-                        React.createElement('p', { key: 'desc' }, 'Bu örnek bir React scroll sayfasıdır.')
+                        React.createElement('h1', null, 'Hoş Geldiniz'),
+                        React.createElement('p', null, 'Doğal ve butik kahvelerimizle sizleri bekliyoruz.'),
+                        React.createElement('img', { src: 'https://source.unsplash.com/300x200/?coffee-shop', alt: 'Coffeeshop Görseli', width: '300' })
+                    ])
+                ),
+                React.createElement('section', { id: 'products', className: 'section', key: 'products' },
+                    React.createElement('div', { className: 'content' }, [
+                        React.createElement('h1', null, 'Ürünlerimiz'),
+                        React.createElement('p', null, 'Tamamen doğal kahve, bitki çayları ve sağlıklı atıştırmalıklarımızı keşfedin.'),
+                        React.createElement('img', { src: 'https://source.unsplash.com/300x200/?coffee', alt: 'Kahve' }),
+                        React.createElement('img', { src: 'https://source.unsplash.com/300x200/?dessert', alt: 'Tatlı' }),
+                        React.createElement('img', { src: 'https://source.unsplash.com/300x200/?snack', alt: 'Aperatif' })
                     ])
                 ),
                 React.createElement('section', { id: 'about', className: 'section', key: 'about' },
                     React.createElement('div', { className: 'content' }, [
-                        React.createElement('h2', { key: 'title' }, 'Hakkımızda'),
-                        React.createElement('p', { key: 'desc' }, 'Biz profesyonel bir ekibiz.')
-                    ])
-                ),
-                React.createElement('section', { id: 'services', className: 'section', key: 'services' },
-                    React.createElement('div', { className: 'content' }, [
-                        React.createElement('h2', { key: 'title' }, 'Hizmetlerimiz'),
-                        React.createElement('p', { key: 'desc' }, 'Size en iyi hizmeti sunuyoruz.')
+                        React.createElement('h1', null, 'Hakkımızda'),
+                        React.createElement('p', null, 'Butik kahve dükkanımızın sıcak atmosferini ve organik ürünlerimizi keşfedin.'),
+                        React.createElement('img', { src: 'https://source.unsplash.com/300x200/?dark-cafe', alt: 'Hakkımızda' })
                     ])
                 ),
                 React.createElement('section', { id: 'contact', className: 'section', key: 'contact' },
                     React.createElement('div', { className: 'content' }, [
-                        React.createElement('h2', { key: 'title' }, 'İletişim'),
-                        React.createElement('p', { key: 'desc' }, 'Bizimle iletişime geçin.')
+                        React.createElement('h1', null, 'İletişim'),
+                        React.createElement('p', null, 'Bizimle iletişime geçmek için sosyal medya hesaplarımızı ziyaret edin veya kahve dükkanımıza uğrayın.'),
+                        React.createElement('p', null, 'Adres: Doğal CoffeeShop, İstanbul'),
+                        React.createElement('p', null, 'Telefon: +90 555 123 45 67'),
+                        React.createElement('p', null, 'E-posta: info@dogalcoffeeshop.com'),
+                        React.createElement('iframe', { width: '300', height: '200', frameBorder: '0', scrolling: 'no', marginHeight: '0', marginWidth: '0', 
+                            src: 'https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=Istanbul' })
                     ])
                 )
             ]);
         };
-
-        ReactDOM.render(
-            React.createElement(App),
-            document.getElementById('root')
-        );
+        ReactDOM.render(React.createElement(App), document.getElementById('root'));
     </script>
 </body>
 </html>
